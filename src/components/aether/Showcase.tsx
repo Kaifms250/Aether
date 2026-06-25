@@ -114,6 +114,7 @@ function ProductCard({
   p: (typeof products)[number];
   i: number;
 }) {
+  const [imgOk, setImgOk] = useState(true);
   return (
     <motion.article
       initial={{ opacity: 0, y: 40 }}
@@ -130,9 +131,25 @@ function ProductCard({
           background: `radial-gradient(80% 60% at 30% 30%, ${p.color}55, oklch(0.13 0.02 270) 70%)`,
         }}
       />
-      <div className="absolute inset-0 flex items-center justify-center text-[12rem] opacity-90 transition-transform duration-700 group-hover:scale-110">
-        {p.glyph}
-      </div>
+      {imgOk ? (
+        <img
+          src={p.image}
+          alt={`${p.brand} ${p.name}`}
+          loading="lazy"
+          decoding="async"
+          width={900}
+          height={1125}
+          onError={() => setImgOk(false)}
+          className="absolute inset-0 h-full w-full object-cover opacity-90 mix-blend-luminosity transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center text-[12rem] opacity-90 transition-transform duration-700 group-hover:scale-110">
+          {p.glyph}
+        </div>
+      )}
+      {/* darken so glass chips stay legible over photography */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+
 
       {/* badge */}
       <div className="absolute top-5 left-5 glass-strong rounded-full px-3.5 py-1.5 text-[0.65rem] uppercase tracking-[0.2em]">
