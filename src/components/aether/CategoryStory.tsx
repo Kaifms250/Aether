@@ -86,8 +86,8 @@ export function CategoryStory({ category, i }: { category: Category; i: number }
               Live · {category.items.length} drops
             </div>
             {/* product chips */}
-            <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2">
-              {category.items.slice(0, 4).map((it) => (
+            <div className="absolute bottom-6 left-6 right-6 flex flex-wrap gap-2 max-h-[55%] overflow-hidden">
+              {category.items.slice(0, 8).map((it) => (
                 <div
                   key={it.label}
                   className="glass-strong rounded-2xl px-4 py-3 text-xs"

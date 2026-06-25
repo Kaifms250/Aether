@@ -60,13 +60,34 @@ export function BrandMarquee() {
             >
               <img
                 src={logoUrl(b.domain)}
-                alt={b.name}
+                alt={`${b.name} logo`}
                 loading="lazy"
+                decoding="async"
+                width={120}
+                height={48}
                 className="max-h-12 max-w-[120px] object-contain"
                 style={{ filter: "brightness(0) invert(0.95)" }}
                 onError={(e) => {
-                  // logo.dev brand colors fallback if mono fails
-                  (e.currentTarget as HTMLImageElement).style.filter = "none";
+                  const img = e.currentTarget as HTMLImageElement;
+                  // 1st failure: drop the mono filter and retry with brand colors
+                  if (!img.dataset.fallback) {
+                    img.dataset.fallback = "color";
+                    img.style.filter = "none";
+                    return;
+                  }
+                  // 2nd failure: swap to a text wordmark so the slot never goes blank
+                  if (img.dataset.fallback !== "text") {
+                    img.dataset.fallback = "text";
+                    const parent = img.parentElement;
+                    if (parent) {
+                      img.remove();
+                      const span = document.createElement("span");
+                      span.textContent = b.name;
+                      span.className =
+                        "font-display text-xl tracking-wide text-platinum/80";
+                      parent.appendChild(span);
+                    }
+                  }
                 }}
               />
             </div>

@@ -1,5 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+
+// Royalty-free imagery from Unsplash. `unsplash.com/photos/<id>` resolves via
+// the images.unsplash.com CDN with on-the-fly resize + format negotiation.
+const img = (id: string, w = 900) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 
 const products = [
   {
@@ -9,6 +14,7 @@ const products = [
     tag: "Spatial",
     glyph: "◐",
     color: "#8ab4ff",
+    image: img("1622979135225-d2ba269cf1ac"), // headset / tech
   },
   {
     name: "Air Max Scorpion",
@@ -17,6 +23,7 @@ const products = [
     tag: "Footwear",
     glyph: "◇",
     color: "#ff7a59",
+    image: img("1542291026-7eec264c27ff"), // red nike sneaker
   },
   {
     name: "Sonos Era 300",
@@ -25,6 +32,7 @@ const products = [
     tag: "Audio",
     glyph: "◉",
     color: "#c0c5ce",
+    image: img("1608043152269-423dbba4e7e1"), // speaker
   },
   {
     name: "MX Master 4S",
@@ -33,6 +41,7 @@ const products = [
     tag: "Precision",
     glyph: "◑",
     color: "#6d6cff",
+    image: img("1527864550417-7fd91fc51a46"), // mouse
   },
   {
     name: "Galaxy Z Fold 7",
@@ -41,6 +50,7 @@ const products = [
     tag: "Flagship",
     glyph: "▤",
     color: "#90e0c0",
+    image: img("1511707171634-5f897ff02aa9"), // phone
   },
   {
     name: "Charge 6 Speaker",
@@ -49,6 +59,7 @@ const products = [
     tag: "Portable",
     glyph: "◍",
     color: "#ffb347",
+    image: img("1545454675-3531b543be5d"), // portable speaker
   },
 ];
 
@@ -103,6 +114,7 @@ function ProductCard({
   p: (typeof products)[number];
   i: number;
 }) {
+  const [imgOk, setImgOk] = useState(true);
   return (
     <motion.article
       initial={{ opacity: 0, y: 40 }}
@@ -119,9 +131,25 @@ function ProductCard({
           background: `radial-gradient(80% 60% at 30% 30%, ${p.color}55, oklch(0.13 0.02 270) 70%)`,
         }}
       />
-      <div className="absolute inset-0 flex items-center justify-center text-[12rem] opacity-90 transition-transform duration-700 group-hover:scale-110">
-        {p.glyph}
-      </div>
+      {imgOk ? (
+        <img
+          src={p.image}
+          alt={`${p.brand} ${p.name}`}
+          loading="lazy"
+          decoding="async"
+          width={900}
+          height={1125}
+          onError={() => setImgOk(false)}
+          className="absolute inset-0 h-full w-full object-cover opacity-90 mix-blend-luminosity transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center text-[12rem] opacity-90 transition-transform duration-700 group-hover:scale-110">
+          {p.glyph}
+        </div>
+      )}
+      {/* darken so glass chips stay legible over photography */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+
 
       {/* badge */}
       <div className="absolute top-5 left-5 glass-strong rounded-full px-3.5 py-1.5 text-[0.65rem] uppercase tracking-[0.2em]">
