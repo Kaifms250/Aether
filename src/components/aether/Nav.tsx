@@ -60,6 +60,24 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [acctOpen, setAcctOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const [counts, setCounts] = useState({ wishlist: 0, cart: 0 });
+
+  useEffect(() => {
+    if (!user) {
+      setCounts({ wishlist: 0, cart: 0 });
+      return;
+    }
+    (async () => {
+      const [w, c] = await Promise.all([
+        supabase.from("wishlist_items").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("cart_items").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      ]);
+      setCounts({ wishlist: w.count ?? 0, cart: c.count ?? 0 });
+    })();
+  }, [user]);
+
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
